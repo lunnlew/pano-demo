@@ -1,0 +1,21 @@
+{
+  "name": "pano-demo",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.130.1",
+    "vue": "^3.0.5"
+  },
+  "devDependencies": {
+    "@types/three": "^0.130.1",
+    "@vitejs/plugin-vue": "^1.2.5",
+    "@vue/compiler-sfc": "^3.0.5",
+    "typescript": "^4.3.2",
+    "vite": "^2.4.3",
+    "vue-tsc": "^0.0.24"
+  }
+}
