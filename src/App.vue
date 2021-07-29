@@ -1,15 +1,15 @@
 <template>
-  <three-demo></three-demo>
+  <pano-player></pano-player>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import threeDemo from './components/threeDemo.vue'
+import PanoPlayer from './components/PanoPlayer/index.vue'
 
 export default defineComponent({
   name: 'App',
   components: {
-    threeDemo
+    PanoPlayer
   }
 })
 </script>

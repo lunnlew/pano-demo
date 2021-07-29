@@ -1,0 +1,43 @@
+<template>
+  <div
+    id="img"
+    ref="img"
+    style="
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    "
+  ></div>
+</template>
+
+<script lang="ts">
+import PanoPlayer from "./PanoPlayer";
+import image from "../../assets/1.jpg";
+import { ref, defineComponent, onMounted, onUnmounted, reactive } from "vue";
+export default defineComponent({
+  name: "PanoPlayer",
+  setup: () => {
+    const panoPlayer = new PanoPlayer(2, image);
+
+    onMounted(async () => {
+      panoPlayer.mountTo(img.value).start();
+    });
+
+    onUnmounted(() => {
+      panoPlayer.destory();
+    });
+
+    const img = ref<HTMLElement | null>(null);
+    return { img };
+  },
+});
+</script>
+
+<style scoped>
+</style>
