@@ -25,7 +25,18 @@ class PerspectiveControl {
     /**
      * 鼠标按键、触摸及键盘按键模拟的距离
      */
-    protected movement: { x: number; y: number; } = { x: 0, y: 0 }
+    protected movement: {
+        x: number;
+        y: number;
+    } = { x: 0, y: 0 }
+
+    /**
+    * 鼠标按键、触摸位置值标准化后的值
+    */
+    protected mouse: {
+        x: number;
+        y: number;
+    } = { x: 0, y: 0 }
 
     /**
      * PerspectiveCamera 照相机
@@ -172,6 +183,10 @@ class PerspectiveControl {
             x: event.movementX,
             y: event.movementY
         }
+        this.mouse = {
+            x: (event.clientX / window.innerWidth) * 2 - 1,
+            y: -(event.clientY / window.innerHeight) * 2 + 1
+        }
     }
 
     /**
@@ -187,6 +202,10 @@ class PerspectiveControl {
     onDocumentMouseUp() {
         this.isUserInteractive = false
         this.movement = {
+            x: 0,
+            y: 0
+        }
+        this.mouse = {
             x: 0,
             y: 0
         }
@@ -220,6 +239,10 @@ class PerspectiveControl {
                 x: currentPoint.pageX - lastPoint?.pageX,
                 y: currentPoint.pageY - lastPoint?.pageY
             }
+            this.mouse = {
+                x: (currentPoint.pageX / window.innerWidth) * 2 - 1,
+                y: -(currentPoint.pageY / window.innerHeight) * 2 + 1
+            }
         } else {
             // 双指 缩放
             let lastPoint1 = this.lastPonits[0]
@@ -250,6 +273,10 @@ class PerspectiveControl {
         this.isUserInteractive = false
         this.lastPonits = []
         this.movement = {
+            x: 0,
+            y: 0
+        }
+        this.mouse = {
             x: 0,
             y: 0
         }
@@ -352,7 +379,7 @@ class PerspectiveControl {
         }
         return this.camera_target_angle
     }
-    
+
     /**
      * 照相机
      */
