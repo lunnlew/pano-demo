@@ -137,7 +137,7 @@ class PanoPlayer {
         // 表示视野旋转
         let { lng, lat } = camera_target_angle
         var euler1 = new THREE.Euler();
-        euler1.set(lat, lng, 0, 'YZX');
+        euler1.set(lat, -lng, 0, 'YXZ');
         var quaternion = new THREE.Quaternion();
         quaternion.setFromEuler(euler1)
         camera.quaternion.multiply(quaternion);
