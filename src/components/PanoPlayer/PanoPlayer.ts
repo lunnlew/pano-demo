@@ -39,9 +39,9 @@ class PanoPlayer {
     protected geometry: THREE.SphereBufferGeometry | undefined;
 
     /**
-     * Ttexture_resourse 全景图片资源
+     * THREE.MeshBasicMaterial 贴图
      */
-    protected texture_resourse: string;
+    protected material!: THREE.MeshBasicMaterial;
 
     /**
      * PerspectiveControl 全景交互控制器
@@ -64,15 +64,17 @@ class PanoPlayer {
     protected stats!: Stats;
 
     /**
+     * 是否挂载
+     */
+    protected mounted: any;
+
+    /**
      * 全景播放器构造函数
      * @param radius 球半径
-     * @param texture_resourse 全景图片资源
      */
-    constructor(radius: number, texture_resourse: string) {
+    constructor(radius: number) {
         // 全景半径
         this.radius = radius;
-        // 全景图片
-        this.texture_resourse = texture_resourse;
 
         this.initScene()
         this.initRenderer()
@@ -81,11 +83,33 @@ class PanoPlayer {
     }
 
     /**
+     * 加载全景图片
+     * @param texture_resourse 全景图片资源
+     */
+    async loadImage(texture_resourse: string) {
+        const loader = new THREE.TextureLoader();
+        if (!this.material) {
+            let texture = loader.load(texture_resourse)
+            this.material = new THREE.MeshBasicMaterial({
+                map: texture
+            });
+            const cube = new THREE.Mesh(this.geometry, this.material);
+            this.scene.add(cube);
+        } else {
+            this.material.map?.dispose()
+            this.material.map = loader.load(texture_resourse)
+        }
+    }
+
+    /**
      * 启动全景应用
      */
     async start() {
         let that = this
         this.initStats()
+        this.initEvent()
+        this.mountDom()
+
         let camera = that.perspectiveControl.getCamera()
         /**
          * 动画循环
@@ -101,8 +125,6 @@ class PanoPlayer {
             }
             requestAnimationFrame(animate)
         }
-        await this.composeMaterial()
-        this.initEvent()
         animate()
     }
 
@@ -144,6 +166,16 @@ class PanoPlayer {
     }
 
     /**
+     * 挂载dom
+     * @returns 
+     */
+    mountDom() {
+        if (this.mounted) return
+        this.dom?.appendChild(this.renderer.domElement);
+        this.mounted = true
+    }
+
+    /**
      * 初始化场景
      */
     initScene() {
@@ -167,18 +199,6 @@ class PanoPlayer {
         this.geometry = new THREE.SphereBufferGeometry(this.radius, 64, 64);
         // 球面反转，由外表面改成内表面贴图
         this.geometry.scale(-1, 1, 1);
-    }
-
-    /**
-     * 组合场景素材
-     */
-    async composeMaterial() {
-        const loader = new THREE.TextureLoader();
-        const material = new THREE.MeshBasicMaterial({
-            map: loader.load(this.texture_resourse)
-        });
-        const cube = new THREE.Mesh(this.geometry, material);
-        this.scene.add(cube);
     }
 
     /**
@@ -213,7 +233,6 @@ class PanoPlayer {
      */
     mountTo(dom: HTMLElement | null) {
         this.dom = dom
-        dom?.appendChild(this.renderer.domElement);
         return this
     }
 

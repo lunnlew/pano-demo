@@ -192,8 +192,8 @@ class PerspectiveControl {
     onDocumentMouseMove(event: any) {
         if (!this.isUserInteractive) return
         this.movement = {
-            x: event.movementX * this.radius / 2.5,
-            y: event.movementY * this.radius / 2.5
+            x: event.movementX,
+            y: event.movementY
         }
         this.mouse = {
             x: (event.clientX / window.innerWidth) * 2 - 1,
