@@ -55,6 +55,11 @@ class PerspectiveControl {
     protected camera_target_angle: { lng: number, lat: number } = { lng: 0, lat: 0 }
 
     /**
+     * radius 球半径
+     */
+    protected radius: number = 0;
+
+    /**
      * 渲染器
      */
     protected renderer: THREE.WebGLRenderer;
@@ -120,6 +125,7 @@ class PerspectiveControl {
         this.camera.position.x = 0;
         this.camera.position.y = 0;
         this.camera.position.z = 0;
+        this.radius = radius
         this.camera.lookAt(radius, 0, 0);
     }
 
@@ -186,8 +192,8 @@ class PerspectiveControl {
     onDocumentMouseMove(event: any) {
         if (!this.isUserInteractive) return
         this.movement = {
-            x: event.movementX,
-            y: event.movementY
+            x: event.movementX * this.radius / 2.5,
+            y: event.movementY * this.radius / 2.5
         }
         this.mouse = {
             x: (event.clientX / window.innerWidth) * 2 - 1,
@@ -351,9 +357,9 @@ class PerspectiveControl {
     /**
      * 球面距离对应角度
      */
-    convertDistanceToAngle(radius: number) {
-        this.camera_target_angle.lng -= (this.movement.x / radius) * 0.01;
-        this.camera_target_angle.lat += (this.movement.y / radius) * 0.01;
+    convertDistanceToAngle() {
+        this.camera_target_angle.lng -= (this.movement.x / this.radius) * 0.01;
+        this.camera_target_angle.lat += (this.movement.y / this.radius) * 0.01;
     }
 
     /**
@@ -383,12 +389,12 @@ class PerspectiveControl {
     /**
      * 更新照相机角度
      */
-    update(radius: number) {
+    update() {
         if (this.isUserInteractive) {
             if (this.isUseKey) {
                 this.updateKeyAngle()
             } else if (!this.muliteTouchMode) {
-                this.convertDistanceToAngle(radius)
+                this.convertDistanceToAngle()
             }
         }
         return this.camera_target_angle

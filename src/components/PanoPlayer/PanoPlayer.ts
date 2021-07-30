@@ -93,7 +93,7 @@ class PanoPlayer {
         function animate() {
             that.renderer.render(that.scene, camera);
             let deviceOrientation = that.deviceOrientationControl.update()
-            let camera_target_angle = that.perspectiveControl.update(that.radius)
+            let camera_target_angle = that.perspectiveControl.update()
             that.updateCamera(camera, deviceOrientation, camera_target_angle)
             if (that.enableStats) {
                 that.stats.begin()
@@ -123,16 +123,16 @@ class PanoPlayer {
         var orient = screenOrientation ? THREE.MathUtils.degToRad(screenOrientation) : 0;
 
         // 表示设备旋转
-        var q0 = new THREE.Quaternion();
-        var q1 = new THREE.Quaternion(- Math.sqrt(0.5), 0, 0, Math.sqrt(0.5));
+        var q0 = new THREE.Quaternion(0, -Math.sqrt(0.5), 0, Math.sqrt(0.5));
         var euler = new THREE.Euler();
         euler.set(beta, alpha, - gamma, 'YXZ');
         camera.quaternion.setFromEuler(euler);
-        camera.quaternion.multiply(q1);
+        camera.quaternion.multiply(q0);
 
         // 表示屏幕旋转
+        var q1 = new THREE.Quaternion();
         var zee = new THREE.Vector3(0, 0, 1);
-        camera.quaternion.multiply(q0.setFromAxisAngle(zee, - orient));
+        camera.quaternion.multiply(q1.setFromAxisAngle(zee, - orient));
 
         // 表示视野旋转
         let { lng, lat } = camera_target_angle

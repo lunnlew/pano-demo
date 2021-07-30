@@ -24,7 +24,7 @@ import { ref, defineComponent, onMounted, onUnmounted, reactive } from "vue";
 export default defineComponent({
   name: "PanoPlayer",
   setup: () => {
-    const panoPlayer = new PanoPlayer(2, image);
+    const panoPlayer = new PanoPlayer(100, image);
     let info = ref("");
     onMounted(async () => {
       panoPlayer.mountTo(img.value).start();
