@@ -1,25 +1,8 @@
-import * as THREE from "three";
-
 /**
  * 全景应用交互控制器
  * 实现陀螺仪相关事件动作
  */
 class DeviceOrientationControl {
-
-    /**
-     * PerspectiveCamera 照相机
-     */
-    protected camera!: THREE.PerspectiveCamera;
-
-    /**
-     * 陀螺仪历史角度值
-     */
-    protected last_abg: { alpha: number; beta: number; } = { alpha: 0, beta: 0 }
-
-    /**
-     * 照相机的焦点角度
-     */
-    protected camera_target_angle: { lng: number, lat: number } = { lng: 0, lat: 0 }
 
     /**
      * 屏幕方向角
@@ -37,11 +20,8 @@ class DeviceOrientationControl {
 
     /**
      * 全景播放器交互控制器构造函数
-     * @param camera 照相机
      */
-    constructor(camera: THREE.PerspectiveCamera) {
-        this.camera = camera
-    }
+    constructor() { }
 
     /**
      * 设备方向事件
@@ -79,7 +59,7 @@ class DeviceOrientationControl {
     }
 
     /**
-     * 更新照相机角度
+     * 更新设备角度
      */
     update() {
         return {

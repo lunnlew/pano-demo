@@ -94,6 +94,7 @@ class PanoPlayer {
                 map: texture
             });
             const cube = new THREE.Mesh(this.geometry, this.material);
+            cube.position.set(0, 0, 0)
             this.scene.add(cube);
         } else {
             this.material.map?.dispose()
@@ -206,7 +207,7 @@ class PanoPlayer {
      */
     initControl() {
         this.perspectiveControl = new PerspectiveControl(this.renderer, this.radius)
-        this.deviceOrientationControl = new DeviceOrientationControl(this.perspectiveControl.getCamera())
+        this.deviceOrientationControl = new DeviceOrientationControl()
     }
 
     /**
@@ -240,6 +241,7 @@ class PanoPlayer {
      * 全景应用资源释放
      */
     destory() {
+        this.material.map?.dispose()
         this.perspectiveControl.removeEvent()
         this.deviceOrientationControl.removeEvent()
         this.renderer.domElement.remove()
