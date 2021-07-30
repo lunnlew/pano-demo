@@ -1,4 +1,4 @@
-import { PerspectiveCamera, WebGLRenderer } from "three";
+import * as THREE from "three";
 
 function getDistance(
     start: { x: number; y: number },
@@ -13,7 +13,13 @@ function getScale(
     start: { x: number; y: number }[],
     stop: { x: number; y: number }[]
 ) {
-    return getDistance(start[0], start[1]) / getDistance(stop[0], stop[1]);
+    let s = getDistance(start[0], start[1])
+    let e = getDistance(stop[0], stop[1])
+    if (s - e > 0) {
+        return s / e;
+    } else {
+        return -e / s;
+    }
 }
 
 /**
@@ -41,7 +47,7 @@ class PerspectiveControl {
     /**
      * PerspectiveCamera 照相机
      */
-    protected camera!: PerspectiveCamera;
+    protected camera!: THREE.PerspectiveCamera;
 
     /**
      * 照相机的焦点角度
@@ -51,7 +57,7 @@ class PerspectiveControl {
     /**
      * 渲染器
      */
-    protected renderer: WebGLRenderer;
+    protected renderer: THREE.WebGLRenderer;
 
     /**
      * 是否是用户交互事件中
@@ -103,9 +109,9 @@ class PerspectiveControl {
      * @param renderer 渲染对象
      * @param radius 球半径
      */
-    constructor(renderer: WebGLRenderer, radius: number) {
+    constructor(renderer: THREE.WebGLRenderer, radius: number) {
         this.renderer = renderer
-        this.camera = new PerspectiveCamera(
+        this.camera = new THREE.PerspectiveCamera(
             75,
             window.innerWidth / window.innerHeight,
             0.1,
@@ -215,10 +221,10 @@ class PerspectiveControl {
      * 触摸触发事件处理
      */
     onDocumentTouchStart(event: any) {
-        this.muliteTouchMode = event.changedTouches.length > 1
+        this.muliteTouchMode = event.touches.length > 1
         this.isUserInteractive = true
         this.lastPonits = []
-        for (let t of event.changedTouches) {
+        for (let t of event.touches) {
             this.lastPonits.push({
                 pageX: t.pageX,
                 pageY: t.pageY,
@@ -233,7 +239,7 @@ class PerspectiveControl {
         if (!this.muliteTouchMode) {
             // 单指 移动
             let lastPoint = this.lastPonits[0]
-            let currentPoint = <{ pageX: number, pageY: number }>Array.from(event.changedTouches).pop()
+            let currentPoint = <{ pageX: number, pageY: number }>Array.from(event.touches).pop()
             this.lastPonits[0] = currentPoint
             this.movement = {
                 x: currentPoint.pageX - lastPoint?.pageX,
@@ -247,7 +253,7 @@ class PerspectiveControl {
             // 双指 缩放
             let lastPoint1 = this.lastPonits[0]
             let lastPoint2 = this.lastPonits[1]
-            let points = event.changedTouches
+            let points = event.touches
             let newPoint1 = points[0]
             let newPoint2 = points[1]
             let scale = getScale(
@@ -260,7 +266,15 @@ class PerspectiveControl {
                     { x: newPoint2.pageX, y: newPoint2.pageY },
                 ]
             );
-            this.camera.fov += scale * 0.01;
+            let fov = this.camera.fov + scale;
+            // 限制视角范围
+            if (fov > 160) {
+                fov = 160
+            }
+            if (fov < 10) {
+                fov = 10
+            }
+            this.camera.fov = fov
             this.camera.updateProjectionMatrix();
         }
     }
@@ -373,11 +387,23 @@ class PerspectiveControl {
         if (this.isUserInteractive) {
             if (this.isUseKey) {
                 this.updateKeyAngle()
-            } else {
+            } else if (!this.muliteTouchMode) {
                 this.convertDistanceToAngle(radius)
             }
         }
         return this.camera_target_angle
+    }
+
+    /**
+     * 获取raycaster直线和所有模型相交的数组集合
+     * @param objects 模型
+     * @returns 
+     */
+    getIntersects(objects: THREE.Object3D[]) {
+        var vector = new THREE.Vector3(this.mouse.x, this.mouse.y, 0.5).unproject(this.camera);
+        var raycaster = new THREE.Raycaster(this.camera.position, vector.sub(this.camera.position).normalize());
+        var intersects = raycaster.intersectObjects(objects);
+        return intersects
     }
 
     /**

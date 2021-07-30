@@ -14,6 +14,7 @@
       overflow: hidden;
     "
   ></div>
+  <div class="info" v-html="info"></div>
 </template>
 
 <script lang="ts">
@@ -24,7 +25,7 @@ export default defineComponent({
   name: "PanoPlayer",
   setup: () => {
     const panoPlayer = new PanoPlayer(2, image);
-
+    let info = ref("");
     onMounted(async () => {
       panoPlayer.mountTo(img.value).start();
     });
@@ -34,10 +35,19 @@ export default defineComponent({
     });
 
     const img = ref<HTMLElement | null>(null);
-    return { img };
+    return { img, info };
   },
 });
 </script>
 
 <style scoped>
+.info {
+  z-index: 1;
+  width: 100px;
+  height: 50px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #ccc;
+}
 </style>

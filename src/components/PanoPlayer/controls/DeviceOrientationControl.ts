@@ -47,7 +47,12 @@ class DeviceOrientationControl {
      * 设备方向事件
      */
     onOrientationchange() {
-        this.screenOrientation = window.orientation || 0;
+        let orientation = 0
+        // TODO 此处暂未处理字符值
+        if (typeof window.orientation === 'string') {
+            orientation = 0
+        }
+        this.screenOrientation = orientation || 0;
     }
 
     /**
@@ -72,7 +77,7 @@ class DeviceOrientationControl {
         window.removeEventListener("orientationchange", this.onOrientationchange);
         window.removeEventListener("deviceorientation", this.onDeviceorientation);
     }
-    
+
     /**
      * 更新照相机角度
      */
